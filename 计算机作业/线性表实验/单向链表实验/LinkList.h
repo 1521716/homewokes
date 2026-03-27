@@ -22,22 +22,17 @@ Status InitList(LinkList& L);
 Status HeadCreateList(LinkList& L); 
 //尾插创建单链表
 Status TailCreateList(LinkList& L);
-/*//插入操作
+//插入操作
 Status InsertList(LinkList& L, int i, ElemType x);
 //删除操作
-Status DeleteList(LinkList& L, int i);*/
+Status DeleteList(LinkList& L, int i);
 //输出操作
 void ShowList(LinkList L);
-/*//排序操作
-void SortList(LinkList& L);
+//排序操作
+Status SortList(LinkList& L);
 //有序表插入操作 
 Status InsertOrderList(LinkList& L, ElemType x);
 //有序表合并
-
-
-//int LocateList(LinkList L, ElemType x);//查找操作
-
-
-
-*/
-void menu();//菜单操作 
+Status MergeList(LinkList& L1, LinkList L2);
+//菜单操作 
+void menu();

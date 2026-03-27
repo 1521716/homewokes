@@ -25,73 +25,108 @@ void menu()
 		case 1:
 		{
 			if (HeadCreateList(L) == ERROR)
-				cout << "创建失败！" << endl;
+				cout << "前插入创建失败！" << endl;
 			else
-				cout << "创建成功！" << endl;
+				cout << "前插入创建成功！" << endl;
 			break;
 		}
 		case 2:
 		{
 			if (TailCreateList(L) == OK)
-				cout << "创建成功！" << endl;
+				cout << "尾插入创建成功！" << endl;
 			else
-				cout << "创建失败！" << endl;
+				cout << "尾插入创建失败！" << endl;
 			break;
 		}
 		case 3:
 		{
-			ShowList(L);
+			cout << "请输入插入数据位置：" << endl;
+			int i;
+			cin >> i;
+			cout << "请输入插入数据大小：" << endl;
+			ElemType x;
+			cin >> x;
+			if (InsertList(L,i,x) == OK)
+			{
+				cout << "插入成功！" << endl;
+			}
+			else
+			{
+				cout << "插入失败！" << endl;
+			}
 			break;
 		}
-		/*case 4:
+		case 4:
 		{
-			cout << "请输入所要查找的元素：";
-			cin >> elem;
-			//num = LocateList(L, elem);
-			if (num == 0)
-				cout << "查找失败！" << endl;
+			cout << "请输入删除结点位置：" << endl;
+			int i;
+			cin >> i;
+			if (DeleteList(L, i) == OK)
+			{
+				cout << "删除成功！" << endl;
+			}
 			else
-				cout << "查找成功，是第" << num << "个元素！" << endl;
+			{
+				cout << "删除失败！" << endl;
+			}
 			break;
 		}
 		case 5:
 		{
-			cout << "请输入所要插入的元素：";
-			cin >> elem;
-			cout << "请输入所要插入的位置：";
-			cin >> num;
-			if (InsertList(L, num, elem) == OK)
-				cout << "插入成功！" << endl;
-			else
-				cout << "插入失败！" << endl;
+			ShowList(L);
 			break;
 		}
 		case 6:
 		{
-			cout << "请输入所要删除的位置：";
-			cin >> num;
-			if (DeleteList(L, num) == OK)
-				cout << "删除成功！" << endl;
+			if (SortList(L) == OK)
+			{
+				cout << "排序成功！" << endl;
+			}
 			else
-				cout << "删除失败！" << endl;
+			{
+				cout << "排序失败！" << endl;
+			}
 			break;
 		}
 		case 7:
 		{
-			SortList(L);
-			cout << "排序操作结束！" << endl;
+			cout << "请输入要插入的数据：";
+			ElemType x;
+			cin >> x;
+			if (InsertOrderList(L, x) == OK)
+			{
+				cout << "插入成功！" << endl;
+			}
+			else
+			{
+				cout << "插入失败！" << endl;
+			}
 			break;
 		}
 		case 8:
 		{
-			cout << "请输入所要插入的元素：";
-			cin >> elem;
-			if (InsertOrderList(L, elem) == OK)
-				cout << "有序表插入成功！" << endl;
+			LinkList L2;
+			LNode* HeadNode = new LNode;
+			L2 = HeadNode;
+			L2->next = NULL;
+			LNode* p = L2;
+			for (int i = 5; i > 0; i--)
+			{
+				LNode* tem = new LNode;
+				tem->data = i;
+				tem->next = p->next;
+				p->next = tem;
+			}
+			if (MergeList(L, L2) == OK)
+			{
+				cout << "合并成功！" << endl;
+			}
 			else
-				cout << "有序表插入失败！" << endl;
+			{
+				cout << "合并失败！" << endl;
+			}
 			break;
-		}*/
+		}
 		case 0:
 		{
 			cout << "退出系统！" << endl;
@@ -155,11 +190,54 @@ Status TailCreateList(LinkList& L)
 
 	return OK;
 }
-/*//插入操作
-Status InsertList(LinkList& L, int i, ElemType x);
+//插入操作
+Status InsertList(LinkList& L, int i, ElemType x)
+{
+	LNode* p = L;
+	int j = 0;
+	while (p&& j < i - 1)
+	{
+		p = p->next;
+		j++;
+	}
+
+	if (!p||j>i-1)
+	{
+		return ERROR;
+	}
+	LNode* newNode = new LNode;
+	newNode->data = x;
+	newNode->next = p->next;
+	p->next = newNode;
+
+	return OK;
+}
 //删除操作
-Status DeleteList(LinkList& L, int i);
-//输出操作*/
+Status DeleteList(LinkList& L, int i)
+{
+	if (!L->next)
+		return ERROR;
+
+	LNode* p = L;
+	int j = 0;
+	while (p && j < i - 1)
+	{
+		p = p->next;
+		j++;
+	}
+
+	if (!p || j > i - 1)
+	{
+		return ERROR;
+	}
+
+	LNode* tem = p->next;
+	p->next = tem->next;
+	delete tem;
+
+	return OK;
+}
+//输出操作
 void ShowList(LinkList L)
 {
 	if (L->next == NULL)
@@ -169,6 +247,7 @@ void ShowList(LinkList L)
 	}
 
 	LNode* p = L->next;
+	cout << "当前链表为：" << endl;
 	while (p != NULL)
 	{
 		cout << p->data << "\t";
@@ -176,9 +255,81 @@ void ShowList(LinkList L)
 	}
 	cout << endl;
 }
-/*
+
 //排序操作
-void SortList(LinkList& L);
+Status SortList(LinkList& L)
+{
+	if (L->next == NULL)
+		return ERROR;
+
+	LNode* p = L->next;
+
+	//选择排序
+	while (p->next != NULL)
+	{
+		LNode* tem = p->next;
+		ElemType min = p->data;
+		LNode* n = NULL;
+		while (tem != NULL)
+		{
+			if (tem->data < min)
+			{
+				n = tem;
+				min = tem->data;
+			}
+			tem = tem->next;
+		}
+
+		if (n != NULL)
+		{
+			n->data = p->data;
+			p->data = min;
+		}
+
+		p = p->next;
+	}
+
+	return OK;
+}
+
 //有序表插入操作 
-Status InsertOrderList(LinkList& L, ElemType x);
-//有序表合并*/
+Status InsertOrderList(LinkList& L, ElemType x)
+{
+	LNode* p = L;
+
+	while (p->next != NULL && p->next->data < x)
+	{
+		p = p->next;
+	}
+
+	LNode* newNode = new LNode;
+	newNode->data = x;
+	newNode->next = p->next;
+	p->next = newNode;
+
+	return OK;
+}
+//有序表合并
+Status MergeList(LinkList& L1, LinkList L2)
+{
+	LNode* p1 = L1, * p2 = L2,*tem;
+
+	while (p1->next != NULL && p2->next != NULL)
+	{
+		if(p1->next->data <= p2->next->data)
+		{
+			p1 = p1->next;
+		}
+		else
+		{
+			tem = p1->next;
+			p1->next = p2->next;
+			p2->next = tem;
+		}
+		
+	}
+
+	p1->next = p2->next;
+
+	return OK;
+}
