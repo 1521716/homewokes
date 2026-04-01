@@ -60,3 +60,5 @@ void SortBooks(BookList& L);
 int CountBooks(BookList L);
 //按照出版社统计图书数量
 void CountBooksByPHouse(BookList L);
+//销毁线性表
+void DestroyList(BookList &L);

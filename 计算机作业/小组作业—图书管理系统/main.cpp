@@ -256,7 +256,7 @@ int main()
 		system("cls");
 	} while (option);
 
-	////销毁顺序表
-	//DeleteList(BL);
+	//销毁线性表
+	DestroyList(L);
 	return 0;
 }

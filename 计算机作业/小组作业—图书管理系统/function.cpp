@@ -545,3 +545,10 @@ void CountBooksByPHouse(BookList L)
 	}
 
 }
+
+//销毁线性表
+void DestroyList(BookList& L)
+{
+	delete[]L.elem;
+	L.length = 0;
+}
