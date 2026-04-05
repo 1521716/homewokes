@@ -1,27 +1,24 @@
 #include "Stack.h"
 
-
-
 //菜单操作
 void menu()  
 {
-	SqStack L;  //定义栈
-	int x, num;
-	ElemType elem;
+	SqStack S;  //定义栈
+	int x;
 
 	while (1)
 	{
-		cout << "********************************************" << endl;
-		cout << "     1-初始化   2-创建         3-输出       " << endl;
-		cout << "     4-查找     5-插入         6-删除       " << endl;
-		cout << "     7-排序     8-有序表插入   0-退出       " << endl;
-		cout << "********************************************" << endl;
+		cout << "*****************************************************" << endl;
+		cout << "     1-初始化        2-判断空栈         3-入栈       " << endl;
+		cout << "     4-出栈          5-获取栈顶元素     6-遍历       " << endl;
+		cout << "                     0-退出                          " << endl;
+		cout << "*****************************************************" << endl;
 		cin >> x;
 		switch (x)
 		{
 		case 1:
 		{
-			if (InitStack(L) == OK)
+			if (InitStack(S) == OK)
 				cout << "初始化成功！" << endl;
 			else
 				cout << "初始化失败！" << endl;
@@ -29,64 +26,44 @@ void menu()
 		}
 		case 2:
 		{
-			if (CreateStack(L) == OK)
-				cout << "创建成功！" << endl;
+			if (IsEmpty(S) == OK)
+				cout << "当前栈为空！" << endl;
 			else
-				cout << "创建失败！" << endl;
+				cout << "当前栈非空！" << endl;
 			break;
 		}
 		case 3:
 		{
-			ShowStack(L);
+			ElemType x;
+			cout << "请输入要入栈的元素：";
+			cin >> x;
+			if (PushStack(S, x) == OK)
+				cout << "入栈成功！" << endl;
+			else
+				cout << "栈已满，入栈失败！" << endl;
 			break;
 		}
 		case 4:
 		{
-			cout << "请输入所要查找的元素：";
-			cin >> elem;
-			num = LocateStack(L, elem);
-			if (num == 0)
-				cout << "查找失败！" << endl;
+			ElemType e;
+			if (PopStack(S, e) == OK)
+				cout << "元素" << e << "已出栈！" << endl;
 			else
-				cout << "查找成功，是第" << num << "个元素！" << endl;
+				cout << "栈为空！" << endl;
 			break;
 		}
 		case 5:
 		{
-			cout << "请输入所要插入的元素：";
-			cin >> elem;
-			cout << "请输入所要插入的位置：";
-			cin >> num;
-			if (InsertStack(L, num, elem) == OK)
-				cout << "插入成功！" << endl;
+			ElemType e;
+			if (GetTop(S, e) == OK)
+				cout << "当前栈顶元素为：" << e << endl;
 			else
-				cout << "插入失败！" << endl;
+				cout << "获取栈顶元素失败！" << endl;
 			break;
 		}
 		case 6:
 		{
-			cout << "请输入所要删除的位置：";
-			cin >> num;
-			if (DeleteStack(L, num) == OK)
-				cout << "删除成功！" << endl;
-			else
-				cout << "删除失败！" << endl;
-			break;
-		}
-		case 7:
-		{
-			SortStack(L);
-			cout << "排序操作结束！" << endl;
-			break;
-		}
-		case 8:
-		{
-			cout << "请输入所要插入的元素：";
-			cin >> elem;
-			if (InsertOrderStack(L, elem) == OK)
-				cout << "有序表插入成功！" << endl;
-			else
-				cout << "有序表插入失败！" << endl;
+			ShowStack(S);
 			break;
 		}
 		case 0:
@@ -101,58 +78,83 @@ void menu()
 	}
 }
 
-Status InitStack(SqStack& L)//初始化操作 
+//初始化操作
+Status InitStack(SqStack& S) 
 {
-	L.elem = new ElemType[MAXSIZE];
-	if (L.elem == NULL)
+	S.elem = new ElemType[MAXSIZE];
+
+	if (S.elem == NULL)
 		return ERROR;
-	L.top = 0;
+
+	S.top = -1;
+
 	return OK;
 }
-Status CreateStack(SqStack& L)//创建操作 
+
+//判断栈是否为空
+Status IsEmpty(SqStack S)
 {
-	int i;
-	cout << "请输入整数个数：";
-	cin >> L.top;
-	if (L.top<0 || L.top>MAXSIZE)
+	if (S.top == -1)
+		return OK;
+
+	return ERROR;
+}
+
+//入栈
+Status PushStack(SqStack& S, ElemType x)
+{
+	if (S.top == MAXSIZE - 1)
 		return ERROR;
-	cout << "请依次输入各个整数：" << endl;
-	for (i = 0; i < L.top; i++)
-	{
-		cin >> L.elem[i];
-	}
+
+	S.elem[++S.top] = x;
+
 	return OK;
 }
-void ShowStack(SqStack L)//输出操作 
+
+//出栈
+Status PopStack(SqStack& S, ElemType &e)
 {
-	int i;
-	if (L.top == 0)
-		cout << "当前表为空表！" << endl;
-	else
+	if (S.top<0 || S.top>MAXSIZE - 1)
+		return ERROR;
+
+	e = S.elem[S.top--];
+
+	return OK;
+}
+
+//获取栈顶元素
+Status GetTop(SqStack S, ElemType& e)
+{
+	if (S.top<0 || S.top>MAXSIZE - 1)
+		return ERROR;
+
+	e = S.elem[S.top];
+
+	return OK;
+}
+
+//遍历栈
+void ShowStack(SqStack S)
+{
+	if (S.top<-1 || S.top>MAXSIZE - 1)
 	{
-		for (i = 0; i < L.top; i++)
-			cout << L.elem[i] << "  ";
-		cout << endl;
+		cout << "栈状态异常！" << endl;
+		return;
 	}
-}
-int LocateStack(SqStack L, ElemType x)//查找操作
-{
-	//代码省略！
-}
-Status InsertStack(SqStack& L, int i, ElemType x)//插入操作
-{
-	//代码省略！
-}
-Status DeleteStack(SqStack& L, int i)//删除操作
-{
-	//代码省略！
-}
-void SortStack(SqStack& L)//排序操作
-{
-	//代码省略！
-//可使用上学期学过的冒泡排序或选择排序！
-}
-Status InsertOrderStack(SqStack& L, ElemType x)//有序表插入操作 
-{
-	//代码省略！
+
+	if (S.top == -1)
+	{
+		cout << "当前栈为空！" << endl;
+		return;
+	}
+
+	cout << "当前栈元素为：" << endl;
+	int i = S.top;
+	while (i > -1)
+	{
+		cout << S.elem[i] << " ";
+		i--;
+	}
+	cout << endl;
+
 }
